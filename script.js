@@ -1,73 +1,83 @@
+/**@type {HTMLCanvasElement} */
 const canvas = document.getElementById('canvas1');
 const ctx = canvas.getContext('2d');
-let gameFrame = 0;
+CANVAS_WIDTH = canvas.width = 500;
+CANVAS_HEIGHT = canvas.height = 1000;
+const numberOfInfected = 10;
+const infectedArray =[];
 
-const CANVAS_WIDTH = canvas.width = 1240;
-const CANVAS_HEIGHT = canvas.height = 720;
-let gameSpeed = 5;
+let cursorX = 0;
+let cursorY = 0;
 
-//importing background layers
-const backgroundLayer1 = new Image();
-backgroundLayer1.src = './1280x720/1.png';
-const backgroundLayer2 = new Image();
-backgroundLayer2.src = './1280x720/2.png';
-const backgroundLayer3 = new Image();
-backgroundLayer3.src = './1280x720/3.png';
-const backgroundLayer4 = new Image();
-backgroundLayer4.src = './1280x720/4.png';
-
-window.addEventListener('load', function(){
-//Experiment with speedModifier
-const slider = document.getElementById('slider');
-slider.value = gameSpeed;
-const showGameSpeed = document.getElementById('showGameSpeed');
-showGameSpeed.innerHTML = gameSpeed;
-slider.addEventListener('change', function(e){
-    // console.log(e.target.value);
-    gameSpeed = e.target.value;
-    showGameSpeed.innerHTML = e.target.value;
+canvas.addEventListener('mousemove', function(event){
+    cursorX = event.offsetX;
+    cursorY = event.offsetY;
 });
 
-//Helps project be dynamic by adding an object to hold layers
-class Layer{
-    constructor(image, speedModifier){
-        this.x= 0;
-        this.y=0;
-        this.width = 1280;
-        this.height = 720;
-        this.image = image; 
-        this.speedModifier = speedModifier;
-        this.speed = gameSpeed * this.speedModifier;
+console.log(cursorX);
+
+gameFrame =0;
+class Infected {
+    constructor(){
+        this.image = new Image();
+        this.image.src = './racoon_attack-Sheet.png';
+        this.y = 450;
+        //this.speed = Math.random() * 4 - 2;
+        this.spriteWidth = 256;
+        this.spriteHeight = 256;
+        this.width = this.spriteWidth / 1.75;
+        this.height = this.spriteHeight/ 1.75;
+        this.x = Math.random() * (canvas.width - this.width);
+        this.frame = 0;
+        this.attackSpeed = Math.floor(Math.random() * 5 + 1);
     }
 
     update(){
-        this.speed= gameSpeed * this.speedModifier;
-        if (this.x <= -this.width){
-            this.x = 0;
+          // Calculate the direction towards the cursor
+          const directionX = cursorX - this.x;
+          const directionY = cursorY - this.y;
+  
+          // Normalize the direction
+          const length = Math.sqrt(directionX * directionX + directionY * directionY);
+          const normalizedX = directionX / length;
+          const normalizedY = directionY / length;
+  
+          // Move towards the cursor
+          this.x += normalizedX * this.attackSpeed;
+          this.y += normalizedY * this.attackSpeed;
+
+        //this.x = Math.random() /(canvas.width - this.width);
+       // this.y = 600;
+        //if (this.x + this.width < 0) this.x = canvas.width;
+        if (gameFrame % this.attackSpeed === 0){
+        this.frame > 44 ? this.frame = 0 : this.frame++;
         }
-        this.x = this.x - this.speed;
     }
     draw(){
-        ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
-        ctx.drawImage(this.image, this.x + this.width, this.y, this.width, this.height);
+        //ctx.clearRect(this.x, this.y, this.width, this.height);
+        ctx.drawImage(this.image, this.frame * this.spriteWidth, 0, this.spriteWidth, this.spriteHeight,  this.x, this.y, this.width, this.height);
     }
+};
+
+for (let i = 0; i < numberOfInfected; i++){
+    infectedArray.push(new Infected());
 }
 
-const layer1 = new Layer(backgroundLayer1, 0.5);
-const layer2 = new Layer(backgroundLayer2, 0.5);
-const layer3 = new Layer(backgroundLayer3, 0.5);
-const layer4 = new Layer(backgroundLayer4, 1);
+console.log(infectedArray);
 
-const gameObjects =[layer1, layer2, layer3, layer4]
+const infected1 = new Infected();
+
+function updateObjectPosition(){
+
+}
 
 function animate(){
-    ctx.clearRect(0, 0, CANVAS_WIDTH,CANVAS_HEIGHT);
-    gameObjects.forEach(object => {
-        object.update();
-        object.draw();
+    ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+    infectedArray.forEach(infected =>{
+        infected.update();
+        infected.draw();
     })
+    gameFrame++;
     requestAnimationFrame(animate);
-};
+}
 animate();
-} );
-
