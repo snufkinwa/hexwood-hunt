@@ -1,0 +1,73 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset = "UTF-8">
+    <meta http-equiv=""X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, intial-scale=1.0">
+    <title>Collision Logic</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <canvas id="canvas1" width="800" height="600" style="border: 3px solid #000;"  top="50px;" left = "50%;" transform= "translate(-50%, -50%);"></canvas>
+    <script>
+        const canvas = document.getElementById('canvas1');
+        const ctx = canvas.getContext('2d');
+    
+        const circle1 = { x: 100, y: 100, radius: 50, dx: 2, dy: 2 };
+        const circle2 = { x: 300, y: 300, radius: 50, dx: -2, dy: -2 };
+    
+        function drawCircle(circle) {
+            ctx.beginPath();
+            ctx.arc(circle.x, circle.y, circle.radius, 0, Math.PI * 2);
+            ctx.stroke();
+        }
+    
+        function isColliding(c1, c2) {
+            let dx = c2.x - c1.x;
+            let dy = c2.y - c1.y;
+            let distance = Math.sqrt(dx * dx + dy * dy);
+            return distance < c1.radius + c2.radius;
+        }
+    
+        function update() {
+            // Update positions
+            circle1.x += circle1.dx;
+            circle1.y += circle1.dy;
+            circle2.x += circle2.dx;
+            circle2.y += circle2.dy;
+    
+            // Boundary collision
+            [circle1, circle2].forEach(circle => {
+                if (circle.x + circle.radius > canvas.width || circle.x - circle.radius < 0) {
+                    circle.dx *= -1;
+                }
+                if (circle.y + circle.radius > canvas.height || circle.y - circle.radius < 0) {
+                    circle.dy *= -1;
+                }
+            });
+    
+            // Check for collision between circles
+            if (isColliding(circle1, circle2)) {
+                circle1.dx *= -1;
+                circle1.dy *= -1;
+                circle2.dx *= -1;
+                circle2.dy *= -1;
+            }
+    
+            draw();
+        }
+    
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawCircle(circle1);
+            drawCircle(circle2);
+        }
+    
+        setInterval(update, 20);
+    </script>
+    
+    
+</body>
+</html>
+
