@@ -97,12 +97,30 @@ window.addEventListener('load', function(){
             this.fps = 3;
             this.frameTimer = 0;
             this.frameInterval = 1500/this.fps;
+
+            this.maxHealth = 100;
+            this.currentHealth = this.maxHealth;
         }
 
         draw(context){
+            context.strokeStyle = 'white';
+            context.beginPath();
+            context.arc(this.x + this.width/3, this.y + this.height/2, this.width/2, 0, Math.PI *2);
+            context.stroke();
             context.drawImage(this.image, this.frameX * this.width, this.frameY * this.height, this.width, this.height, this.x, this.y, this.width, this.height);
         }
-        update(input, deltaTime) {
+        update(input, deltaTime, infectedCreatures) {
+            //collison detection
+            infectedCreatures.forEach(infected => {
+                const dx = infected.x - this.x;
+                const dy = infected.y - this.y;
+                const distance = Math.sqrt (dx* dx + dy * dy);
+                if(distance < infected.width/2 + this.width/2){
+                    this.takeDamage(infected.attackDamage);
+                }
+
+            });
+
             //Sprite animation
             if (this.frameTimer > this.frameInterval){
                 if(this.frameX >= this.maxFrame) this.frameX = 0;
@@ -140,6 +158,14 @@ window.addEventListener('load', function(){
         }
         onGround(){
             return this.y >= this.gameHeight - this.height;
+        }
+        updateHealth(amount) {
+            this.currentHealth += amount;
+            this.currentHealth = Math.max(0, Math.min(this.currentHealth, this.maxHealth));
+        }
+        takeDamage(amount) {
+            this.currentHealth -= amount;
+            this.currentHealth = Math.max(0, this.currentHealth); // Ensure health doesn't go below 0
         }
 
 
@@ -184,6 +210,10 @@ window.addEventListener('load', function(){
             this.markedforDeletion = false; 
         }
         draw(context){
+            context.strokeStyle = 'white';
+            context.beginPath();
+            context.arc(this.x + this.width/3, this.y + this.height/2, this.width/4, 2, Math.PI *2);
+            context.stroke();
             context.drawImage(this.image, this.frameX * this.width, 0, this.width, this.height, this.x, this.y, this.width, this.height);
         }
         update(deltaTime){
@@ -232,6 +262,7 @@ window.addEventListener('load', function(){
     function handleInfected(deltaTime){
        if (infectedTimer > infectedInterval + randomInfectedInterval){
         infectedCreatures.push(new Infected(canvas.width, canvas.height));
+        console.log(infectedCreatures);
         let randomInfectedInterval = Math.random() * 1000 + 500;
         infectedTimer = 0;
        } else {
@@ -248,10 +279,26 @@ window.addEventListener('load', function(){
 
     }
 
-    function displayHealth() {
+    function displayHealth(context, player) {
+        const healthBarWidth = 200; // Width of the health bar
+        const healthBarHeight = 20; // Height of the health bar
+        const healthBarX = 10; // X position of the health bar
+        const healthBarY = 10; // Y position of the health bar
+    
+        // Draw the background of the health bar
+        context.fillStyle = 'grey';
+        context.fillRect(healthBarX, healthBarY, healthBarWidth, healthBarHeight);
+        const currentHealthWidth = (player.currentHealth / player.maxHealth) * healthBarWidth;
 
+        // Draw the current health
+        context.fillStyle = 'red';
+        context.fillRect(healthBarX, healthBarY, currentHealthWidth, healthBarHeight);
+    
+        // Optionally, add a border to the health bar
+        context.strokeStyle = 'black';
+        context.strokeRect(healthBarX, healthBarY, healthBarWidth, healthBarHeight);
+    
     }
-
     const input = new InputHandler();
     const player = new Player (canvas.width, canvas.height);
     const background = new Background(canvas.width, canvas.height);
@@ -261,6 +308,7 @@ window.addEventListener('load', function(){
     let infectedTimer = 0;
     let infectedInterval = 2000;
     let randomInfectedInterval = Math.random() * 1000 + 500;
+    let healthDecreaseRate = Math.floor(Math.random() * 4) + 1;
 
 
     function animate(timeStamp){
@@ -269,8 +317,10 @@ window.addEventListener('load', function(){
         ctx.clearRect(0, 0,canvas.width, canvas.height);
         background.draw(ctx);
         //background.update();
+        displayHealth (ctx, player);
         player.draw(ctx);
-        player.update(input, deltaTime);
+        player.update(input, deltaTime, infectedCreatures);
+        player.updateHealth(-deltaTime / 7000 * healthDecreaseRate); 
         handleInfected(deltaTime);
         requestAnimationFrame(animate);
 
