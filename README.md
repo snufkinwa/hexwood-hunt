@@ -10,10 +10,10 @@
     - Idle
     - Jumping
 - [x] Implement Controls (WASD/Arrow Keys)
-- [ ]  Fine Tuine in-game Physics with Collison Detection
+- [ ] Fine Tune in-game Physics with Collison Detection
 - [ ] Expand accessibility with Mobile Support
 
-### Phase 2: Interactivinyt
+### Phase 2: Enriching Interactivity
 - [ ] Infuse realism with Dynamically Animated Player Movements
   - Walking
   - Running
@@ -24,10 +24,10 @@
   - Attack
   -Jump
   - Death
-- [ ] Proper Parallax Background 
+- [ ] Immerse players deeper with a multi-layered Parallax Background.
 
-### Phase 3 
-- [ ] Add sound effects and music
+### Phase 3: Final Touches
+- [ ] Amplify the ambiance with Sound Effects and Music.
 - [ ] Any finishing touches to bring the game together
 
 
