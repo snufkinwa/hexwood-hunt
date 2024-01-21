@@ -22,7 +22,7 @@
   - Eating Herb
 - [ ] Dynamically Animate Infected Sprite Sheet
   - Attack
-  -Jump
+  - Jump
   - Death
 - [ ] Immerse players deeper with a multi-layered Parallax Background.
 
