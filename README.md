@@ -24,7 +24,7 @@
   - Attack
   - Jump
   - Death
-- [ ] Immerse players deeper with a multi-layered Parallax Background.
+- [x] Immerse players deeper with a multi-layered Parallax Background.
 
 ### Phase 3: Final Touches
 - [ ] Amplify the ambiance with Sound Effects and Music.
