@@ -14,7 +14,7 @@ export default class Player {
         this.frameY = 0;
         this.maxFrame = 6;
         this.speed = 0;
-        this.maxSpeed = 25;
+        this.maxSpeed = 15;
         this.vy = 0;
         this.gravity = 2;
         this.fps = 15;

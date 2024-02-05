@@ -1,13 +1,14 @@
 import Player from './player.js';
 import InputHandler from './input.js';
 import Background  from './background.js';
+import { Raccoon, Rabbit } from './infected.js';
 
 window.addEventListener('load', function(){
     const canvas = document.getElementById('canvas1');
     const ctx = canvas.getContext('2d');
     canvas.width= window.innerWidth;
     canvas.height= window.innerHeight;
-    //let infectedCreatures = [];
+   
 
     // let textIndex = 0;
     // const cutsceneText = [
@@ -67,22 +68,43 @@ window.addEventListener('load', function(){
             this.background = new Background(this);
             this.player = new Player(this);
             this.input = new InputHandler();
+            this.infected = [];
+            this.infectedTimer = 0;
+            this.infectedInterval = 2000;
+            //this.randomInfectedInterval = Math.random() * 1000 + 500;
 
         }
 
         update(deltaTime){
             this.background.update();
             this.player.update(this.input.keys, deltaTime);
-
+            //handleinfected
+            if (this.infectedTimer > this.infectedInterval){
+                this.addInfected();
+                this.infectedTimer = 0;
+            } else {
+                this.infectedTimer += deltaTime;
+            }
+            this.infected.forEach(infected =>{
+                infected.update(deltaTime);
+            });
         }
         draw(context){
-            this.background.drawLayersUpTo(context, 4); // For example, draw up to layer2
+            this.background.drawLayersUpTo(context, 4);
 
             // Draw the player
             this.player.draw(context);
         
             // Draw the remaining background layers
-            this.background.drawLayersFrom(context, 4); 
+            this.background.drawLayersFrom(context, 4);
+
+            this.infected.forEach(infected =>{
+                infected.draw(context);
+            });
+        }
+        addInfected(){
+            this.infected.push(new Raccoon(this), new Rabbit(this));
+            console.log(this.infected);
         }
     }
 
@@ -110,9 +132,6 @@ window.addEventListener('load', function(){
     }
 
      let lastTime = 0;
-    // let infectedTimer = 0;
-    // let infectedInterval = 2000;
-    // let randomInfectedInterval = Math.random() * 1000 + 500;
      let healthDecreaseRate = Math.floor(Math.random() * 4) + 1;
 
 

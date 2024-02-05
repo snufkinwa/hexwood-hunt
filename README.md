@@ -14,7 +14,7 @@
 - [ ] Expand accessibility with Mobile Support
 
 ### Phase 2: Enriching Interactivity
-- [ ] Infuse realism with Dynamically Animated Player Movements
+- [x] Infuse realism with Dynamically Animated Player Movements
   - Walking
   - Running
   - Attack
